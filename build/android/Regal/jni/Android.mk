@@ -1,4 +1,7 @@
-LOCAL_PATH := $(call my-dir)
+LOC_REGAL_PATH := $(call my-dir)
+LOCAL_PATH := $(LOC_REGAL_PATH)
+
+include $(CLEAR_VARS)
 
 # Regal should be shipped with prebult binaries, however, if people tinker, etc...
 #
@@ -45,7 +48,7 @@ snappy_src_files  := $(patsubst %,$(regal_path)/%,$(SNAPPY.CXX))
 snappy_src_files  := $(patsubst $(LOCAL_PATH)/%,%,$(snappy_src_files))
 
 snappy_c_includes := $(regal_path)/src/snappy
-snappy_c_includes := $(patsubst $(LOCAL_PATH)/../%,%,$(snappy_c_includes))
+#snappy_c_includes := $(patsubst $(LOCAL_PATH)/../%,%,$(snappy_c_includes))
 
 snappy_export_c_includes := $(regal_path)/include
 
@@ -61,9 +64,11 @@ apitrace_c_includes := $(regal_path)/include $(regal_path)/src/apitrace/common $
 apitrace_c_includes += $(regal_path)/src/zlib/include $(regal_path)/src/zlib/src $(regal_path)/src/snappy
 apitrace_c_includes += $(regal_path)/src/apitrace/thirdparty/khronos
 apitrace_c_includes += $(regal_path)/src/regal $(regal_path)/src/civetweb $(regal_path)/src/squish
-apitrace_c_includes := $(patsubst $(LOCAL_PATH)/../%,%,$(apitrace_c_includes))
+#apitrace_c_includes := $(patsubst $(LOCAL_PATH)/../%,%,$(apitrace_c_includes))
 
 apitrace_export_c_includes := $(regal_path)/include
+
+$(call __ndk_info,WARNING: Subst... $(apitrace_c_includes) )
 
 #
 #
@@ -83,7 +88,7 @@ regal_src_files += $(regal_path)/src/civetweb/civetweb.c $(regal_path)/src/md5/s
 regal_src_files := $(patsubst $(LOCAL_PATH)/%,%,$(regal_src_files))
 
 regal_c_includes := $(regal_path)/include $(regal_path)/src/regal $(regal_path)/src/boost $(regal_path)/src/civetweb $(regal_path)/src/md5/include $(regal_path)/src/lookup3 $(regal_path)/src/jsonsl
-regal_c_includes := $(patsubst $(LOCAL_PATH)/../%,%,$(regal_c_includes))
+#regal_c_includes := $(patsubst $(LOCAL_PATH)/../%,%,$(regal_c_includes))
 
 regal_export_c_includes := $(regal_path)/include
 
@@ -107,15 +112,15 @@ else # REGAL_FORCE_REBUILD == true
 
 $(call ndk_log,Rebuilding Regal libraries from sources)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := zlib
-LOCAL_SRC_FILES := $(zlib_src_files)
-LOCAL_CFLAGS := $(regal_cflags) -DHAVE_UNISTD_H=1
-LOCAL_C_INCLUDES := $(zlib_c_includes)
-LOCAL_EXPORT_C_INCLUDES := $(zlib_export_c_includes)
-LOCAL_EXPORT_LDLIBS :=
-LOCAL_ARM_MODE  := arm
-include $(BUILD_STATIC_LIBRARY)
+#include $(CLEAR_VARS)
+#LOCAL_MODULE := zlib
+#LOCAL_SRC_FILES := $(zlib_src_files)
+#LOCAL_CFLAGS := $(regal_cflags) -DHAVE_UNISTD_H=1
+#LOCAL_C_INCLUDES := $(zlib_c_includes)
+#LOCAL_EXPORT_C_INCLUDES := $(zlib_export_c_includes)
+#LOCAL_EXPORT_LDLIBS :=
+#LOCAL_ARM_MODE  := arm
+#include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := snappy
@@ -131,7 +136,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := apitrace
 LOCAL_SRC_FILES := $(apitrace_src_files)
 LOCAL_CFLAGS := $(regal_cflags) -DAPITRACE_TLS=0 -DHAVE_EXTERNAL_OS_LOG=1 -DHAVE_BACKTRACE=0 -DTRACE_ENABLED_CHECK=0
-
 LOCAL_C_INCLUDES := $(apitrace_c_includes)
 LOCAL_EXPORT_C_INCLUDES := $(apitrace_export_c_includes)
 LOCAL_EXPORT_LDLIBS :=
@@ -163,8 +167,8 @@ LOCAL_SRC_FILES := $(regal_src_files)
 LOCAL_CFLAGS := $(regal_cflags)
 LOCAL_C_INCLUDES := $(regal_c_includes)
 LOCAL_EXPORT_C_INCLUDES := $(regal_export_c_includes)
-LOCAL_STATIC_LIBRARIES := apitrace zlib snappy
-LOCAL_LDLIBS := -llog
+LOCAL_STATIC_LIBRARIES := apitrace snappy
+LOCAL_LDLIBS := -llog -lz
 LOCAL_EXPORT_LDLIBS := -llog
 LOCAL_ARM_MODE  := arm
 include $(BUILD_SHARED_LIBRARY)
